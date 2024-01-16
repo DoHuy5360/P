@@ -31,6 +31,7 @@ const userDataSource: UserData = {
 			name: "Cat project",
 			images: [
 				"https://cdn.discordapp.com/attachments/894599867228364902/1172466973574168626/0D303192-29A5-49A0-A3F9-766821672010.jpg?ex=65b37a75&is=65a10575&hm=74d2f06fa701971a13ebe4e892322da2d3635346bd1600b171f1efae2674523b&",
+				"https://cdn.discordapp.com/attachments/894599867228364902/1053467028930973746/IMG_3853.jpg?ex=65b44ca0&is=65a1d7a0&hm=94395c793a5a9bb80a9fc52764d50ac5b752a9fb76d462957c182a2d7df45419&",
 			],
 		},
 	],

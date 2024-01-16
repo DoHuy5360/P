@@ -1,12 +1,25 @@
 "use client";
-import { Forms, keyFactor } from "@/app/home/page";
-import { useCallback, useEffect, useState } from "react";
-import Item01 from "./items/item01";
-import Item02 from "./items/item02";
+import { ConvertStringToJSX, Forms, Item, convertStringToJSX, keyFactor } from "@/app/home/page";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Center from "./buttons/center";
 import { GoPlus } from "react-icons/go";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
+import { ViewContext } from "@/context/viewProvider";
+
+export enum TransferTypes {
+	inForm = "inForm",
+	sidebarRight = "sidebarRight",
+}
+
+export type TransferData = {
+	data: {
+		index: number;
+		obj: Forms | Item;
+		jsx: string | null | (() => JSX.Element);
+		type: TransferTypes.inForm | TransferTypes.sidebarRight;
+	};
+};
 
 type TrayProps = {
 	index: number;
@@ -14,25 +27,19 @@ type TrayProps = {
 	data: Forms;
 	setForms: Function;
 };
-export type CV = {
-	Item01: typeof Item01;
-	Item02: typeof Item02;
-};
-export const cv: CV = {
-	Item01: Item01,
-	Item02: Item02,
-};
+
 function Tray({ index, forms, data, setForms }: TrayProps) {
 	const [styles, setStyles] = useState<string>("bg-slate-50");
+	const { setShowSidebarRight } = useContext(ViewContext);
 	const [ComponentItem, setComponentItem] = useState<null | (() => JSX.Element)>(null);
 	const convertItemToJSX = useCallback((data: null | string | (() => JSX.Element)) => {
 		if (data !== null) {
-			data = cv[data as keyof CV];
+			data = convertStringToJSX[data as keyof ConvertStringToJSX];
 		}
 		return data;
 	}, []);
 	useEffect(() => {
-		const jsxItem = convertItemToJSX(data.items.jsx);
+		const jsxItem = convertItemToJSX(data.items === null ? null : data.items.jsx);
 		const temp = () => jsxItem;
 		setComponentItem(temp);
 	}, []);
@@ -86,10 +93,16 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 	const handleDrop = useCallback(
 		(e: any) => {
 			e.preventDefault();
-			var { form } = JSON.parse(e.dataTransfer.getData("application/json"));
-			forms.splice(form.index, 1);
-			forms.splice(index, 0, form.data);
-			setForms([...forms]);
+			var { data }: Pick<TransferData, "data"> = JSON.parse(e.dataTransfer.getData("application/json"));
+			if (data.type === TransferTypes.inForm) {
+				forms.splice(data.index, 1);
+				forms.splice(index, 0, data.obj as Forms);
+				setForms([...forms]);
+			} else if (data.type === TransferTypes.sidebarRight) {
+				const jsxItem = convertItemToJSX(data.jsx === null ? null : data.jsx);
+				const temp = () => jsxItem;
+				setComponentItem(temp);
+			}
 			setStyles("bg-slate-50");
 		},
 		[index, data, forms, setForms]
@@ -110,15 +123,15 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 	);
 	const handleDragStart = useCallback(
 		(e: any) => {
-			e.dataTransfer.setData(
-				"application/json",
-				JSON.stringify({
-					form: {
-						data,
-						index,
-					},
-				})
-			);
+			const transferData: TransferData = {
+				data: {
+					index,
+					obj: data,
+					jsx: data.items === null ? null : data.items.jsx,
+					type: TransferTypes.inForm,
+				},
+			};
+			e.dataTransfer.setData("application/json", JSON.stringify(transferData));
 		},
 		[index, data, forms, setForms]
 	);
@@ -138,7 +151,12 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 			{ComponentItem === null ? (
 				<div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
 					<div className='hover:bg-slate-300 w-10 h-10 rounded-[50%] '>
-						<Center onClick={() => {}} Icon={<GoPlus />} />
+						<Center
+							onClick={() => {
+								setShowSidebarRight(true);
+							}}
+							Icon={<GoPlus />}
+						/>
 					</div>
 				</div>
 			) : (

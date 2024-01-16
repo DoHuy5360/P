@@ -11,7 +11,7 @@ function Item02() {
 						<div>{project.name}</div>
 						<div className='flex gap-2'>
 							{project.images.map((img, i) => {
-								return <img src={img} className='w-20' key={i} alt='' />;
+								return <img src={img} className='w-20' key={i} alt='' draggable={false} />;
 							})}
 						</div>
 					</div>

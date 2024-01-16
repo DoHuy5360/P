@@ -1,17 +1,17 @@
 "use client";
-import { Item } from "@/app/home/page";
+import { ConvertStringToJSX, Item, convertStringToJSX } from "@/app/home/page";
 import { useCallback, useEffect, useState } from "react";
-import { CV, cv } from "./tray";
+import { TransferData, TransferTypes } from "./tray";
 
 type ComponentProps = {
 	data: Item;
+	index: number;
 };
-function Component({ data }: ComponentProps) {
-	const [styles, setStyles] = useState<string>("bg-slate-50");
+function Component({ data, index }: ComponentProps) {
 	const [Component, setComponent] = useState<null | (() => JSX.Element)>(null);
 	const convertItemToJSX = useCallback((data: null | string | (() => JSX.Element)) => {
 		if (data !== null) {
-			data = cv[data as keyof CV];
+			data = convertStringToJSX[data as keyof ConvertStringToJSX];
 		}
 		return data;
 	}, []);
@@ -20,7 +20,29 @@ function Component({ data }: ComponentProps) {
 		const temp = () => jsxItem;
 		setComponent(temp);
 	}, []);
-	return <div>{Component !== null && <Component />}</div>;
+	const handleDragStart = useCallback(
+		(e: any) => {
+			const transferData: TransferData = {
+				data: {
+					index,
+					obj: data,
+					jsx: data.jsx,
+					type: TransferTypes.sidebarRight,
+				},
+			};
+			e.dataTransfer.setData("application/json", JSON.stringify(transferData));
+		},
+		[data]
+	);
+	return (
+		<div>
+			{Component !== null && (
+				<div onDragStart={handleDragStart} draggable={true}>
+					<Component />
+				</div>
+			)}
+		</div>
+	);
 }
 
 export default Component;

@@ -13,7 +13,7 @@ export enum TransferTypes {
 }
 
 export type TransferData = {
-	data: {
+	dataTransfer: {
 		index: number;
 		obj: Forms | Item;
 		jsx: string | null | (() => JSX.Element);
@@ -93,15 +93,20 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 	const handleDrop = useCallback(
 		(e: any) => {
 			e.preventDefault();
-			var { data }: Pick<TransferData, "data"> = JSON.parse(e.dataTransfer.getData("application/json"));
-			if (data.type === TransferTypes.inForm) {
-				forms.splice(data.index, 1);
-				forms.splice(index, 0, data.obj as Forms);
+			var { dataTransfer }: Pick<TransferData, "dataTransfer"> = JSON.parse(e.dataTransfer.getData("application/json"));
+			if (dataTransfer.type === TransferTypes.inForm) {
+				forms.splice(dataTransfer.index, 1);
+				forms.splice(index, 0, dataTransfer.obj as Forms);
 				setForms([...forms]);
-			} else if (data.type === TransferTypes.sidebarRight) {
-				const jsxItem = convertItemToJSX(data.jsx === null ? null : data.jsx);
+			} else if (dataTransfer.type === TransferTypes.sidebarRight) {
+				// update UI
+				const jsxItem = convertItemToJSX(dataTransfer.jsx === null ? null : dataTransfer.jsx);
 				const temp = () => jsxItem;
 				setComponentItem(temp);
+				//  update json
+				data.items = dataTransfer.obj as Item;
+				forms[index] = data;
+				setForms([...forms]);
 			}
 			setStyles("bg-slate-50");
 		},
@@ -124,7 +129,7 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 	const handleDragStart = useCallback(
 		(e: any) => {
 			const transferData: TransferData = {
-				data: {
+				dataTransfer: {
 					index,
 					obj: data,
 					jsx: data.items === null ? null : data.items.jsx,

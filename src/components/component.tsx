@@ -23,7 +23,7 @@ function Component({ data, index }: ComponentProps) {
 	const handleDragStart = useCallback(
 		(e: any) => {
 			const transferData: TransferData = {
-				data: {
+				dataTransfer: {
 					index,
 					obj: data,
 					jsx: data.jsx,

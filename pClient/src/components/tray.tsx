@@ -140,6 +140,7 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 		},
 		[index, data, forms, setForms]
 	);
+	const isNullItem = ComponentItem === null;
 	return (
 		<div
 			onMouseOver={() => {
@@ -151,9 +152,9 @@ function Tray({ index, forms, data, setForms }: TrayProps) {
 			onDrop={handleDrop}
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
-			className={`min-h-32 hover:border-slate-900 border-2 border-transparent relative select-none ${styles}`}
+			className={`${isNullItem ? "min-h-32" : "h-fit"}  hover:bg-slate-100 relative select-none ${styles}`}
 		>
-			{ComponentItem === null ? (
+			{isNullItem ? (
 				<div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
 					<div className='hover:bg-slate-300 w-10 h-10 rounded-[50%] '>
 						<Center

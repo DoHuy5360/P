@@ -1,216 +1,100 @@
 "use client";
-import { ConvertStringToJSX, Forms, Item, convertStringToJSX, keyFactor } from "@/app/home/page";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from "react";
 import Center from "./buttons/center";
 import { GoPlus } from "react-icons/go";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { IoClose } from "react-icons/io5";
 import { ViewContext } from "@/context/viewProvider";
+import { Component, ConvertStringToJSX, KeyManager, convertStringToJSX } from "@/app/ver2/page";
+import Actions from "./actions";
+import DragAndDrop from "./drag";
+
+export function convertItemToJSX(key: null | string | ((data: any) => JSX.Element)) {
+	if (key !== null) {
+		key = convertStringToJSX[key as keyof ConvertStringToJSX];
+	}
+	return key;
+}
 
 export enum TransferTypes {
 	inForm = "inForm",
-	sidebarRight = "sidebarRight",
+	sidebarTop = "sidebarTop",
 }
 
-export type TransferData = {
+export type TransferData<T> = {
 	dataTransfer: {
 		index: number;
-		obj: Forms | Item;
-		jsx: string | null | (() => JSX.Element);
-		type: TransferTypes.inForm | TransferTypes.sidebarRight;
+		obj: Component<T>;
+		jsx: string | null | ((data: Component<T>) => JSX.Element);
+		type: TransferTypes.inForm | TransferTypes.sidebarTop;
 	};
 };
 
-type TrayProps = {
+type TrayProps<T> = {
 	index: number;
-	forms: Forms[];
-	data: Forms;
-	setForms: Function;
+	componentT: Component<T>;
+	arrayComponentsT: Component<T>[];
+	setComponents: Dispatch<SetStateAction<Component<T>[]>>;
 };
 
-function Tray({ index, forms, data, setForms }: TrayProps) {
-	const [styles, setStyles] = useState<string>("bg-slate-50");
-	const { setShowSidebarRight } = useContext(ViewContext);
-	const [ComponentItem, setComponentItem] = useState<null | (() => JSX.Element)>(null);
-	const convertItemToJSX = useCallback((data: null | string | (() => JSX.Element)) => {
-		if (data !== null) {
-			data = convertStringToJSX[data as keyof ConvertStringToJSX];
-		}
-		return data;
-	}, []);
+function Tray<T>({ index, componentT, arrayComponentsT, setComponents }: TrayProps<T>) {
+	const [styles, setStyles] = useState<string>("bg-white");
+	const { setShowSidebarTop } = useContext(ViewContext);
+	const [ComponentItem, setComponentItem] = useState<null | ((data: Component<T>) => JSX.Element)>(null);
 	useEffect(() => {
-		const jsxItem = convertItemToJSX(data.items === null ? null : data.items.jsx);
+		const jsxItem = convertItemToJSX(componentT.items);
 		const temp = () => jsxItem;
 		setComponentItem(temp);
-	}, []);
-	const [isShowActions, setShowActions] = useState(false);
-	const handleAddAbove = useCallback(() => {
-		const newForm: Forms = {
-			id: keyFactor(),
-			items: {
-				id: "it:1",
-				jsx: convertItemToJSX(null),
-			},
-		};
-		if (index === 0) {
-			setForms([newForm, ...forms]);
-		} else {
-			forms.splice(index, 0, newForm);
-			setForms([...forms]);
-		}
-	}, [index, data, forms, setForms]);
-	const handleAddBelow = useCallback(() => {
-		const newForm: Forms = {
-			id: keyFactor(),
-			items: {
-				id: "it:1",
-				jsx: convertItemToJSX(null),
-			},
-		};
-		if (index === forms.length) {
-			setForms([...forms, newForm]);
-		} else {
-			forms.splice(index + 1, 0, newForm);
-			setForms([...forms]);
-		}
-	}, [index, data, forms, setForms]);
-	const handleDelete = useCallback(() => {
-		forms.splice(index, 1);
-		setForms([...forms]);
-	}, [index, data, forms, setForms]);
-	const handleMoveUp = useCallback(() => {
-		const temp = forms[index - 1];
-		forms[index - 1] = forms[index];
-		forms[index] = temp;
-		setForms([...forms]);
-	}, [index, data, forms, setForms]);
-	const handleMoveDown = useCallback(() => {
-		const temp = forms[index + 1];
-		forms[index + 1] = forms[index];
-		forms[index] = temp;
-		setForms([...forms]);
-	}, [index, data, forms, setForms]);
-	const handleDrop = useCallback(
-		(e: any) => {
-			e.preventDefault();
-			var { dataTransfer }: Pick<TransferData, "dataTransfer"> = JSON.parse(e.dataTransfer.getData("application/json"));
-			if (dataTransfer.type === TransferTypes.inForm) {
-				forms.splice(dataTransfer.index, 1);
-				forms.splice(index, 0, dataTransfer.obj as Forms);
-				setForms([...forms]);
-			} else if (dataTransfer.type === TransferTypes.sidebarRight) {
-				// update UI
-				const jsxItem = convertItemToJSX(dataTransfer.jsx === null ? null : dataTransfer.jsx);
-				const temp = () => jsxItem;
-				setComponentItem(temp);
-				//  update json
-				data.items = dataTransfer.obj as Item;
-				forms[index] = data;
-				setForms([...forms]);
-			}
-			setStyles("bg-slate-50");
-		},
-		[index, data, forms, setForms]
-	);
-	const handleDragOver = useCallback(
-		(e: any) => {
-			e.preventDefault();
-			setStyles("bg-green-100");
-		},
-		[index, data, forms, setForms]
-	);
-	const handleDragLeave = useCallback(
-		(e: any) => {
-			e.preventDefault();
-			setStyles("bg-slate-50");
-		},
-		[index, data, forms, setForms]
-	);
-	const handleDragStart = useCallback(
-		(e: any) => {
-			const transferData: TransferData = {
-				dataTransfer: {
-					index,
-					obj: data,
-					jsx: data.items === null ? null : data.items.jsx,
-					type: TransferTypes.inForm,
+	}, [arrayComponentsT]);
+	const getNewItem: () => Component<T> = useCallback(() => {
+		return {
+			id: KeyManager.getKey(),
+			items: null,
+			component: {
+				permissions: {
+					dragging: true,
+					editing: true,
+					duplicating: true,
+					deleting: true,
+					collapsing: true,
+					viewing: true,
+					clearing: true,
 				},
-			};
-			e.dataTransfer.setData("application/json", JSON.stringify(transferData));
-		},
-		[index, data, forms, setForms]
-	);
+				data: null,
+			},
+		};
+	}, [arrayComponentsT]);
 	const isNullItem = ComponentItem === null;
 	return (
-		<div
-			onMouseOver={() => {
-				setShowActions(true);
-			}}
-			onMouseLeave={() => {
-				setShowActions(false);
-			}}
-			onDrop={handleDrop}
-			onDragOver={handleDragOver}
-			onDragLeave={handleDragLeave}
-			className={`${isNullItem ? "min-h-32" : "h-fit"}  hover:bg-slate-100 relative select-none ${styles}`}
-		>
-			{isNullItem ? (
-				<div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
-					<div className='hover:bg-slate-300 w-10 h-10 rounded-[50%] '>
-						<Center
-							onClick={() => {
-								setShowSidebarRight(true);
-							}}
-							Icon={<GoPlus />}
-						/>
-					</div>
-				</div>
-			) : (
-				<div onDragStart={handleDragStart} draggable={true} className='cursor-grab'>
-					<ComponentItem />
-				</div>
-			)}
-
-			{isShowActions && (
-				<div
-					onClick={handleAddAbove}
-					className='w-5 h-5 bg-yellow-300 cursor-pointer absolute left-[50%] top-0 translate-x-[-50%] translate-y-[-50%] z-10 border-2 border-solid border-slate-900'
-				>
-					<Center onClick={() => {}} Icon={<GoPlus />} />
-				</div>
-			)}
-			{isShowActions && (
-				<div
-					onClick={handleAddBelow}
-					className='w-5 h-5 bg-yellow-300 cursor-pointer absolute left-[50%] bottom-0 translate-x-[-50%] translate-y-[50%] z-10 border-2 border-solid border-slate-900'
-				>
-					<Center onClick={() => {}} Icon={<GoPlus />} />
-				</div>
-			)}
-			{isShowActions && (
-				<div
-					onClick={handleDelete}
-					className='w-5 h-5 bg-red-300 cursor-pointer absolute top-[50%] right-0 translate-x-[50%] translate-y-[-50%] z-10 border-2 border-solid border-slate-900'
-				>
-					<Center Icon={<IoClose />} />
-				</div>
-			)}
-			{isShowActions && index !== 0 && (
-				<div
-					onClick={handleMoveUp}
-					className='w-5 h-5 bg-blue-300 rounded-tl-[50%] rounded-tr-[50%] cursor-pointer absolute top-0 right-0 translate-x-[50%] translate-y-[-50%] z-10 border-2 border-solid border-slate-900'
-				>
-					<Center Icon={<IoIosArrowUp />} />
-				</div>
-			)}
-			{isShowActions && index + 1 !== forms.length && (
-				<div
-					onClick={handleMoveDown}
-					className='w-5 h-5 bg-blue-300 rounded-bl-[50%] rounded-br-[50%]  cursor-pointer absolute bottom-0 right-0 translate-x-[50%] translate-y-[50%] z-10 border-2 border-solid border-slate-900'
-				>
-					<Center Icon={<IoIosArrowDown />} />
-				</div>
-			)}
+		<div className={`hover:bg-slate-100 relative select-none ${styles}`}>
+			<DragAndDrop
+				index={index}
+				elementT={componentT}
+				arrayT={arrayComponentsT}
+				setArrayT={setComponents}
+				setComponentItem={setComponentItem}
+				setStyles={setStyles}
+			>
+				<Actions index={index} elementT={componentT} arrayT={arrayComponentsT} setArrayT={setComponents} getNewItem={getNewItem}>
+					{isNullItem ? (
+						<div className='min-h-56 min-w-56'>
+							<div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
+								<div className='hover:bg-slate-300 w-10 h-10 rounded-[50%] '>
+									<Center
+										onClick={(e: any) => {
+											e.stopPropagation();
+											setShowSidebarTop(true);
+										}}
+										Icon={<GoPlus />}
+									/>
+								</div>
+							</div>
+						</div>
+					) : (
+						<div draggable={true} className='cursor-grab h-fit'>
+							<ComponentItem {...componentT} />
+						</div>
+					)}
+				</Actions>
+			</DragAndDrop>
 		</div>
 	);
 }

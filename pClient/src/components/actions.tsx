@@ -5,7 +5,7 @@ import Center from "./buttons/center";
 import { GoPlus } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { Component } from "@/app/ver2/page";
+import { Component } from "@/app/page";
 import { AiOutlineClear } from "react-icons/ai";
 
 type ActionsProps<T> = {
@@ -20,47 +20,71 @@ type ActionsProps<T> = {
 function Actions<T>({ children, index, arrayT, elementT, setArrayT, getNewItem }: ActionsProps<T>) {
 	const { clearing } = elementT.component.permissions;
 	const [isShowActions, setShowActions] = useState(false);
-	const handleClearItem = useCallback(() => {
-		arrayT[index].items = null;
-		setArrayT([...arrayT]);
-	}, [index, elementT, arrayT, setArrayT]);
-
-	const handleAddAbove = useCallback(() => {
-		const newForm: Component<T> = getNewItem();
-		if (index === 0) {
-			setArrayT([newForm, ...arrayT]);
-		} else {
-			arrayT.splice(index, 0, newForm);
+	const handleClearItem = useCallback(
+		(e: any) => {
+			e.stopPropagation();
+			arrayT[index].items = null;
 			setArrayT([...arrayT]);
-		}
-	}, [index, elementT, arrayT.length, setArrayT]);
-	const handleAddBelow = useCallback(() => {
-		const newForm: Component<T> = getNewItem();
-		if (index === arrayT.length) {
-			setArrayT([...arrayT, newForm]);
-		} else {
-			arrayT.splice(index + 1, 0, newForm);
+		},
+		[index, elementT, arrayT, setArrayT]
+	);
+
+	const handleAddAbove = useCallback(
+		(e: any) => {
+			e.stopPropagation();
+			const newForm: Component<T> = getNewItem();
+			if (index === 0) {
+				setArrayT([newForm, ...arrayT]);
+			} else {
+				arrayT.splice(index, 0, newForm);
+				setArrayT([...arrayT]);
+			}
+		},
+		[index, elementT, arrayT.length, setArrayT]
+	);
+	const handleAddBelow = useCallback(
+		(e: any) => {
+			e.stopPropagation();
+			const newForm: Component<T> = getNewItem();
+			if (index === arrayT.length) {
+				setArrayT([...arrayT, newForm]);
+			} else {
+				arrayT.splice(index + 1, 0, newForm);
+				setArrayT([...arrayT]);
+			}
+		},
+		[index, elementT, arrayT.length, setArrayT]
+	);
+	const handleDelete = useCallback(
+		(e: any) => {
+			e.stopPropagation();
+			arrayT.splice(index, 1);
 			setArrayT([...arrayT]);
-		}
-	}, [index, elementT, arrayT.length, setArrayT]);
-	const handleDelete = useCallback(() => {
-		arrayT.splice(index, 1);
-		setArrayT([...arrayT]);
-	}, [index, elementT, arrayT, setArrayT]);
+		},
+		[index, elementT, arrayT, setArrayT]
+	);
 
-	const handleMoveUp = useCallback(() => {
-		const temp = arrayT[index - 1];
-		arrayT[index - 1] = arrayT[index];
-		arrayT[index] = temp;
-		setArrayT([...arrayT]);
-	}, [index, elementT, arrayT, setArrayT]);
+	const handleMoveUp = useCallback(
+		(e: any) => {
+			e.stopPropagation();
+			const temp = arrayT[index - 1];
+			arrayT[index - 1] = arrayT[index];
+			arrayT[index] = temp;
+			setArrayT([...arrayT]);
+		},
+		[index, elementT, arrayT, setArrayT]
+	);
 
-	const handleMoveDown = useCallback(() => {
-		const temp = arrayT[index + 1];
-		arrayT[index + 1] = arrayT[index];
-		arrayT[index] = temp;
-		setArrayT([...arrayT]);
-	}, [index, elementT, arrayT, setArrayT]);
+	const handleMoveDown = useCallback(
+		(e: any) => {
+			e.stopPropagation();
+			const temp = arrayT[index + 1];
+			arrayT[index + 1] = arrayT[index];
+			arrayT[index] = temp;
+			setArrayT([...arrayT]);
+		},
+		[index, elementT, arrayT, setArrayT]
+	);
 
 	return (
 		<div

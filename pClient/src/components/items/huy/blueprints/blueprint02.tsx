@@ -1,9 +1,10 @@
-import { Component } from "@/app/ver2/page";
+import { Component } from "@/app/page";
 import Contenteditable from "@/components/inputs/fakeInput";
 import { DataSourceContext } from "@/context/dataSourceProvider";
 import { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import LabelWrap from "./title";
 import FakeInput from "@/components/inputs/fakeInput";
+import useUpdateDataSource from "@/components/hooks/useUpdateDataSource";
 
 export type IntroductionProps = {
 	title: string;
@@ -11,22 +12,11 @@ export type IntroductionProps = {
 
 function Introduction({ component }: Component<IntroductionProps>) {
 	const { dataSource, dispatch } = useContext(DataSourceContext);
-	const updateIntroductionContent = useCallback((value: string) => {
-		dispatch({
-			type: "Update-Introduction-Content",
-			value,
-		});
-	}, []);
-	const updateIntroductionTitle = useCallback((value: string) => {
-		dispatch({
-			type: "Update-Introduction-Title",
-			value,
-		});
-	}, []);
+	const { actions } = useUpdateDataSource({});
 	return (
 		<LabelWrap
-			title={<FakeInput value={dataSource.introduction.title} onInput={updateIntroductionTitle} />}
-			body={<FakeInput value={dataSource.introduction.content} onInput={updateIntroductionContent} />}
+			title={<FakeInput value={dataSource.introduction.title} onInput={actions.updateIntroductionTitle} />}
+			body={<FakeInput value={dataSource.introduction.content} onInput={actions.updateIntroductionContent} />}
 		/>
 	);
 }

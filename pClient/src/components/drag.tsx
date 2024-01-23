@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useState } from "react";
 import { TransferData, TransferTypes, convertItemToJSX } from "./tray";
-import { Component } from "@/app/ver2/page";
+import { Component } from "@/app/page";
 
 type DragAndDropProps<T> = {
 	children: ReactNode;

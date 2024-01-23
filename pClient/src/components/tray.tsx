@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState 
 import Center from "./buttons/center";
 import { GoPlus } from "react-icons/go";
 import { ViewContext } from "@/context/viewProvider";
-import { Component, ConvertStringToJSX, KeyManager, convertStringToJSX } from "@/app/ver2/page";
+import { Component, ConvertStringToJSX, KeyManager, convertStringToJSX } from "@/app/page";
 import Actions from "./actions";
 import DragAndDrop from "./drag";
 
@@ -65,14 +65,7 @@ function Tray<T>({ index, componentT, arrayComponentsT, setComponents }: TrayPro
 	const isNullItem = ComponentItem === null;
 	return (
 		<div className={`hover:bg-slate-100 relative select-none ${styles}`}>
-			<DragAndDrop
-				index={index}
-				elementT={componentT}
-				arrayT={arrayComponentsT}
-				setArrayT={setComponents}
-				setComponentItem={setComponentItem}
-				setStyles={setStyles}
-			>
+			<DragAndDrop index={index} elementT={componentT} arrayT={arrayComponentsT} setArrayT={setComponents} setComponentItem={setComponentItem} setStyles={setStyles}>
 				<Actions index={index} elementT={componentT} arrayT={arrayComponentsT} setArrayT={setComponents} getNewItem={getNewItem}>
 					{isNullItem ? (
 						<div className='min-h-56 min-w-56'>

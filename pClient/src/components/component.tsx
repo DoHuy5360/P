@@ -1,13 +1,13 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { TransferData, TransferTypes } from "./tray";
-import { Component, ConvertStringToJSX, KeyManager, convertStringToJSX } from "@/app/ver2/page";
+import { Component, ConvertStringToJSX, KeyManager, convertStringToJSX } from "@/app/page";
 
 type ComponentProps<T> = {
 	data: Component<T>;
 	index: number;
 };
-function Component<T>({ data, index }: ComponentProps<T>) {
+function Item<T>({ data, index }: ComponentProps<T>) {
 	const [Component, setComponent] = useState<null | ((data: Component<T>) => JSX.Element)>(null);
 	const convertItemToJSX = useCallback((data: null | string | ((data: Component<any>) => JSX.Element)) => {
 		if (data !== null) {
@@ -38,14 +38,12 @@ function Component<T>({ data, index }: ComponentProps<T>) {
 		data.id = KeyManager.getKey();
 	}, [data]);
 	return (
-		<div>
-			{Component !== null && (
-				<div onDragStart={handleDragStart} onDragEnd={handleDragEnd} draggable={true}>
-					<Component {...data} />
-				</div>
-			)}
-		</div>
+		Component !== null && (
+			<div onDragStart={handleDragStart} onDragEnd={handleDragEnd} className='hover:bg-slate-100 cursor-grab' draggable={true}>
+				<Component {...data} />
+			</div>
+		)
 	);
 }
 
-export default Component;
+export default Item;

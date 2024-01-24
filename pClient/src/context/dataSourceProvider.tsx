@@ -301,7 +301,10 @@ export type ActionType =
 export type ActionOnly = ActionType["type"];
 
 const reducer = (state: UserData, action: ActionType) => {
-	if (action.type === "Update-Name") state.name = action.value;
+	if (action.type === "Reload") return { ...state };
+	else if (action.type === "Update-Phone") state.phone = action.value;
+	else if (action.type === "Update-Birth") state.birth = action.value;
+	else if (action.type === "Update-Gender") state.gender = action.value;
 	else if (action.type === "Update-Introduction-Title") state.introduction.title = action.value;
 	else if (action.type === "Update-Introduction-Content") state.introduction.content = action.value;
 	else if (action.type === "Update-Work-Position") state.work.position = action.value;
@@ -329,7 +332,9 @@ const reducer = (state: UserData, action: ActionType) => {
 	else if (action.type === "Update-Certification-Organization") state.certification.certificates[action.index].organization = action.value;
 	else if (action.type === "Update-Certification-Issuance") state.certification.certificates[action.index].issuance = action.value;
 	else if (action.type === "Update-Project-Technologies") state.gallery.projects[action.parentIndex].technologies[action.index].name = action.value;
-	else if (action.type === "Reload") return { ...state };
+	else if (action.type === "Update-Name") state.name = action.value;
+	else if (action.type === "Update-Project-Type") state.gallery.projects[action.index].type = action.value;
+	else if (action.type === "Update-Company-Address") state.experience.careerPaths[action.index].company.address = action.value;
 	else if (action.type === "Update-Full") state = action.value;
 	return state;
 };

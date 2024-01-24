@@ -97,33 +97,33 @@ function Actions<T>({ children, index, arrayT, elementT, setArrayT, getNewItem }
 			}}
 		>
 			{children}
-			{isShowActions && clearing && (
-				<div className='w-5 h-5 bg-green-300 cursor-pointer absolute left-0 top-[50%] translate-x-[-50%] translate-y-[-50%] z-10 border-[1px] border-solid border-slate-900'>
+			{isShowActions && (
+				<div className='w-5 h-5 bg-green-300 cursor-pointer absolute left-0 top-[50%] translate-x-[-100%] translate-y-[-50%] z-10 border-[1px] border-solid border-slate-900'>
 					<Center onClick={handleClearItem} Icon={<AiOutlineClear />} />
 				</div>
 			)}
 			{isShowActions && (
-				<div className='w-5 h-5 bg-yellow-300 cursor-pointer absolute left-[50%] top-0 translate-x-[-50%] translate-y-[-50%] z-10 border-[1px] border-solid border-slate-900'>
+				<div className='w-5 h-5 bg-yellow-300 cursor-pointer absolute left-[50%] top-0 translate-x-[-50%] translate-y-[-100%] z-10 border-[1px] border-solid border-slate-900'>
 					<Center onClick={handleAddAbove} Icon={<GoPlus />} />
 				</div>
 			)}
 			{isShowActions && (
-				<div className='w-5 h-5 bg-yellow-300 cursor-pointer absolute left-[50%] bottom-0 translate-x-[-50%] translate-y-[50%] z-10 border-[1px] border-solid border-slate-900'>
+				<div className='w-5 h-5 bg-yellow-300 cursor-pointer absolute left-[50%] bottom-0 translate-x-[-50%] translate-y-[100%] z-10 border-[1px] border-solid border-slate-900'>
 					<Center onClick={handleAddBelow} Icon={<GoPlus />} />
 				</div>
 			)}
 			{isShowActions && arrayT.length > 1 && (
-				<div className='w-5 h-5 bg-red-300 cursor-pointer absolute top-[50%] right-0 translate-x-[50%] translate-y-[-50%] z-10 border-[1px] border-solid border-slate-900'>
+				<div className='w-5 h-5 bg-red-300 cursor-pointer absolute top-[50%] right-0 translate-x-[100%] translate-y-[-50%] z-10 border-[1px] border-solid border-slate-900'>
 					<Center onClick={handleDelete} Icon={<IoClose />} />
 				</div>
 			)}
 			{isShowActions && index !== 0 && (
-				<div className='w-5 h-5 bg-blue-300 rounded-tl-[50%] rounded-tr-[50%] cursor-pointer absolute top-0 right-0 translate-x-[50%] translate-y-[-50%] z-10 border-[1px] border-solid border-slate-900'>
+				<div className='w-5 h-5 bg-blue-300 rounded-tl-[50%] rounded-tr-[50%] cursor-pointer absolute top-0 right-0 translate-x-[100%] translate-y-[-100%] z-10 border-[1px] border-solid border-slate-900'>
 					<Center onClick={handleMoveUp} Icon={<IoIosArrowUp />} />
 				</div>
 			)}
 			{isShowActions && index + 1 !== arrayT.length && (
-				<div className='w-5 h-5 bg-blue-300 rounded-bl-[50%] rounded-br-[50%]  cursor-pointer absolute bottom-0 right-0 translate-x-[50%] translate-y-[50%] z-10 border-[1px] border-solid border-slate-900'>
+				<div className='w-5 h-5 bg-blue-300 rounded-bl-[50%] rounded-br-[50%]  cursor-pointer absolute bottom-0 right-0 translate-x-[100%] translate-y-[100%] z-10 border-[1px] border-solid border-slate-900'>
 					<Center onClick={handleMoveDown} Icon={<IoIosArrowDown />} />
 				</div>
 			)}

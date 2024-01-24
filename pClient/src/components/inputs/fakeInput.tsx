@@ -6,12 +6,9 @@ type FakeInputType = {
 	onInput: (value: string) => void;
 };
 function FakeInput({ value, onInput, title }: FakeInputType) {
-	const sendText = useCallback(
-		(e: ChangeEvent<HTMLDivElement>) => {
-			onInput(e.target.innerText);
-		},
-		[value]
-	);
+	const sendText = useCallback((e: ChangeEvent<HTMLDivElement>) => {
+		onInput(e.target.innerHTML);
+	}, []);
 	return (
 		<div
 			title={title}

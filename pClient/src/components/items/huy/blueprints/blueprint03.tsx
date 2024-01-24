@@ -10,14 +10,38 @@ import { ViewImageContext } from "@/context/viewImageProvider";
 
 function Experience() {
 	const { dataSource, actions } = useUpdateDataSource({});
+	const getNewItem = useCallback(() => {
+		return {
+			company: {
+				name: "Name?",
+				address: "Address?",
+				images: [
+					{
+						name: "Image name?",
+						source: "",
+					},
+				],
+			},
+			time: {
+				from: "From?",
+				to: "To?",
+			},
+			role: {
+				name: "Role?",
+				tasks: ["task?"],
+			},
+		};
+	}, []);
 	return (
 		<LabelWrap
 			title={<FakeInput value={dataSource.experience.title} onInput={actions.updateExperienceTitle} />}
 			body={
-				<div className='flex flex-col'>
+				<div className='flex flex-col gap-2'>
 					{dataSource.experience.careerPaths.map((career, i) => (
-						<div key={i}>
-							<Company index={i} career={career} />
+						<div key={i} className='pb-2'>
+							<ItemActions index={i} elementT={career} arrayT={dataSource.experience.careerPaths} reload={actions.reload} getNewItem={getNewItem}>
+								<Company index={i} career={career} />
+							</ItemActions>
 						</div>
 					))}
 				</div>

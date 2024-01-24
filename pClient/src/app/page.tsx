@@ -315,7 +315,7 @@ function Body<T>() {
 	);
 }
 
-export const itemContainer: Component<IntroductionProps | any>[] = [
+export const itemContainer: Component<any>[] = [
 	{
 		id: KeyManager.getKey(),
 		items: null,
@@ -446,6 +446,7 @@ export const itemContainer: Component<IntroductionProps | any>[] = [
 		},
 	},
 ];
+
 function SidebarTop<T>() {
 	const [items, setItems] = useState<Component<T>[]>([]);
 	const { isShowSidebarTop, setShowSidebarTop } = useContext(ViewContext);
@@ -464,8 +465,8 @@ function SidebarTop<T>() {
 			onClick={(e: any) => {
 				e.stopPropagation();
 			}}
-			className={`flex flex-col w-full h-0 translate-y-[-100%] overflow-y-scroll sticky top-0 z-20 transition duration-300 select-none border-solid border-slate-400 bg-white ${
-				isShowSidebarTop && "h-80 translate-y-[0] border-b-2"
+			className={`flex flex-col w-full h-0 translate-y-[-100%] overflow-y-scroll sticky top-0 z-20 transition duration-300 select-none border-solid border-inputBorder bg-white ${
+				isShowSidebarTop && "h-80 translate-y-[0] border-b-[1px]"
 			}`}
 		>
 			<div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-2 text-xs'>

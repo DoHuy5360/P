@@ -4,9 +4,23 @@ import LabelWrap from "./title";
 import FakeInput from "@/components/inputs/fakeInput";
 import useUpdateDataSource from "@/components/hooks/useUpdateDataSource";
 import { ViewImageContext } from "@/context/viewImageProvider";
+import ItemActions from "@/components/itemActions";
 
 function Certification() {
 	const { dataSource, actions } = useUpdateDataSource({});
+	const getNewItem: () => CertificateType = useCallback(() => {
+		return {
+			name: "name?",
+			image: [
+				{
+					name: "image name",
+					source: "",
+				},
+			],
+			organization: "organization?",
+			issuance: "issuance?",
+		};
+	}, []);
 	return (
 		<LabelWrap
 			title={<FakeInput value={dataSource.certification.title} onInput={actions.updateCertificationTitle} />}
@@ -14,8 +28,10 @@ function Certification() {
 				<div className='flex flex-wrap gap-2'>
 					{dataSource.certification.certificates.map((cer, i) => {
 						return (
-							<div key={i}>
-								<Certificate certificate={cer} index={i} />
+							<div key={i} className='pb-2'>
+								<ItemActions index={i} elementT={cer} arrayT={dataSource.certification.certificates} reload={actions.reload} getNewItem={getNewItem}>
+									<Certificate certificate={cer} index={i} />
+								</ItemActions>
 							</div>
 						);
 					})}

@@ -4,9 +4,36 @@ import { DataImage, DataSourceContext, Projects } from "@/context/dataSourceProv
 import FakeInput from "@/components/inputs/fakeInput";
 import useUpdateDataSource from "@/components/hooks/useUpdateDataSource";
 import { ViewImageContext } from "@/context/viewImageProvider";
+import ItemActions from "@/components/itemActions";
 
 function Gallery() {
 	const { dataSource, actions } = useUpdateDataSource({});
+	const getNewItem = useCallback(() => {
+		return {
+			name: "name?",
+			type: "type?",
+			members: "members?",
+			technologies: [
+				{
+					name: "Technology?",
+					source: "",
+				},
+			],
+			reference: "reference?",
+			description: "description?",
+			images: [
+				{
+					name: "Project image",
+					source: "",
+				},
+			],
+			role: "role?",
+			time: {
+				from: "from?",
+				to: "to?",
+			},
+		};
+	}, []);
 	return (
 		<LabelWrap
 			title={<FakeInput value={dataSource.gallery.title} onInput={actions.updateProjectTitle} />}
@@ -14,8 +41,10 @@ function Gallery() {
 				<div className='flex flex-col'>
 					{dataSource.gallery.projects.map((prj, i) => {
 						return (
-							<div key={i}>
-								<Project index={i} project={prj} />
+							<div key={i} className='pb-2'>
+								<ItemActions index={i} elementT={prj} arrayT={dataSource.gallery.projects} reload={actions.reload} getNewItem={getNewItem}>
+									<Project index={i} project={prj} />
+								</ItemActions>
 							</div>
 						);
 					})}
